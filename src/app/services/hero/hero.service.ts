@@ -44,6 +44,18 @@ export class HeroService {
       );
   }
 
+  deleteHero(hero: Hero | number): Observable<Hero> {
+    const id = typeof hero === 'number' ? hero : hero.id;
+    const url = `${this.heroesUrl}/${id}`;
+
+    this.log(`deleting hero id=${id}`);
+    return this.http.delete<Hero>(url, httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleted hero id=${id}`)),
+        catchError(this.handleError<Hero>(`deleteHero id=${id}`)),
+      );
+  }
+
   getHeroes(): Observable<Hero[]>  {
     this.log('fetching heroes');
     return this.http.get<Hero[]>(this.heroesUrl)
