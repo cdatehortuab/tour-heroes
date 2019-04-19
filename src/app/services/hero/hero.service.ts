@@ -75,6 +75,19 @@ export class HeroService {
       );
   }
 
+  searchHeroes(term: string): Observable<Hero[]> {
+    const trimTerm = term.trim();
+    if (!trimTerm) {
+      return of([]);
+    }
+
+    return this.http.get<Hero[]>(`${this.heroesUrl}?name=${trimTerm}`)
+      .pipe(
+        tap(heroes => this.log(`found heroes matching "${term}": ${heroes.length}`)),
+        catchError(this.handleError<Hero[]>(`searchHeroes "${term}"`, [])),
+      );
+  }
+
   updateHero(hero: Hero): Observable<any> {
     const { id } = hero;
     const url = `${this.heroesUrl}/${id}`;
